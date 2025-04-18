@@ -41,6 +41,7 @@ app.post('/api/update', (req: Request, res: Response): void => {
     if (!card) {
       res.status(404).json({ error: 'Card not found' });
       return;
+      
     }
 
     const currentBuckets = state.getBuckets();
@@ -66,3 +67,55 @@ app.post('/api/update', (req: Request, res: Response): void => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+app.get('/api/hint', (req: Request, res: Response) => {
+    try {
+        const {cardFront,cardBack}= req.query;
+        if(!cardFront || !cardBack || typeof cardBack!=='string' || typeof cardFront!=='string'){
+            res.status(400).json({ error: 'Missing or invalid cardFront or cardBack' });
+            return;
+        }
+        const card = state.findCard(cardFront, cardBack);
+        if (!card) {
+            res.status(404).json({ error: 'Card not found' });
+            return;
+            
+          }
+          const hint=logic.getHint(card);
+          console.log(`Hint requested for card: Front - ${cardFront}, Back - ${cardBack}`);
+          res.json({ hint });
+
+    
+        
+    } catch (error) {
+        console.error('Error in /api/hint:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.get('/api/progress',(req : Request,res : Response)=>{
+
+try {
+      
+    const bucketsMap = state.getBuckets();
+    const bucketSets = logic.toBucketSets(bucketsMap);
+    const history = state.getHistory();
+    const progress = logic.computeProgress(bucketSets,history);
+    res.json({progress})
+    
+} catch (error) {
+    console.error('Error in /api/progress:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+}
+});
+
+
+app.get('/api/day/next', (req: Request, res: Response) => {
+    state.incrementDay();
+    const newDay = state.getCurrentDay();
+    console.log(`new day is ${newDay}`);
+    res.status(200).json({ message: "Day incremented successfully", newDay: newDay }); // Includes a success message
+  });
+  // Start Server:
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`); // Log message
+  });
