@@ -1,0 +1,25 @@
+﻿# Ignore ALL node_modules
+**/node_modules/
+
+# Build artifacts
+**/dist/
+
+# Environment
+.env
+.env*.local
+
+# Logs
+*.log
+logs/
+
+# Editors
+.vscode/
+.idea/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Lock files (KEEP THESE)
+!package-lock.json
+!package.json
