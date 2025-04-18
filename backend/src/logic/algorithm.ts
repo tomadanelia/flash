@@ -10,6 +10,7 @@
 
 import { Flashcard, AnswerDifficulty, BucketMap } from "./flashcards";
 
+
 /**
  * Converts a Map representation of learning buckets into an Array-of-Set representation.
  *
@@ -174,37 +175,51 @@ export function getHint(card: Flashcard): string {
   }
   return card.hint;
 }
+
+import { PracticeRecord } from '../types'; // Assuming PracticeRecord is in './types'
+
+// Define the type for the history (an array of PracticeRecord)
+type PracticeHistory = PracticeRecord[];
+
 /**
  * Computes statistics about the user's learning progress.
  *
  * @param buckets - Array-of-Set representation of learning buckets.
- * @param history - User's answer history (can be extended to track performance over time).
- * @returns an object containing:
- *   - totalCards: total number of flashcards across all buckets,
- *   - masteredCards: number of cards in the highest bucket,
- *   - bucketCounts: number of cards per bucket index.
+ * @param history - User's answer history (array of PracticeRecord).
+ * @returns an object containing learning progress statistics.
  *
  * @spec.requires buckets is a non-null, defined array of Sets of Flashcards.
+ * @spec.requires history is a non-null, defined array of PracticeRecord.
  * @spec.effects does not mutate the input buckets or history.
  * @spec.ensures returns an object with non-negative integer statistics.
  */
 export function computeProgress(
   buckets: Array<Set<Flashcard>>,
-  history: any // can be refined to a structured type later
+  history: PracticeHistory
 ): {
   totalCards: number;
   masteredCards: number;
   bucketCounts: number[];
+  averageDifficulty: number; // New statistic
+  cardsPracticed: number; // New statistic
 } {
   if (!Array.isArray(buckets)) {
-    throw new Error("Buckets must be a defined array.");
+    throw new Error('Buckets must be a defined array.');
+  }
+
+  if (!Array.isArray(history)) {
+    throw new Error('History must be a defined array of PracticeRecord.');
   }
 
   const progress = {
     totalCards: 0,
     masteredCards: 0,
     bucketCounts: [] as number[],
+    averageDifficulty: 0,
+    cardsPracticed: history.length,
   };
+
+  let totalDifficulty = 0;
 
   buckets.forEach((bucket, index) => {
     const size = bucket?.size ?? 0;
@@ -215,6 +230,14 @@ export function computeProgress(
       progress.masteredCards = size;
     }
   });
+
+  // Calculate average difficulty from history
+  if (history.length > 0) {
+    history.forEach((record) => {
+      totalDifficulty += record.difficulty;
+    });
+    progress.averageDifficulty = totalDifficulty / history.length;
+  }
 
   return progress;
 }

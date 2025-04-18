@@ -18,6 +18,6 @@ export interface PracticeSession {
     cardBack: string;           // Back of the flashcard
     timestamp: number;          // Time of practice (e.g., timestamp in milliseconds)
     difficulty: AnswerDifficulty; // Difficulty of the user's answer (e.g., Wrong, Hard, Easy)
-    previousBucket: number;     // The bucket number the card was in before the practice
-    newBucket: number;          // The bucket number the card was moved to after the practice
+    previousBucket: number | undefined;     // The bucket number the card was in before the practice
+    newBucket: number | undefined;          // The bucket number the card was moved to after the practice
   }
