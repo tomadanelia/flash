@@ -58,7 +58,7 @@ const apiService = {
 
   async advanceDay(): Promise<{ currentDay: number }> {
     try {
-      const response = await apiClient.post<{ currentDay: number }>('/day/next');
+      const response = await apiClient.get<{ currentDay: number }>('/day/next');
       return response.data;
     } catch (error: any) {
       console.error('Error advancing day:', error);

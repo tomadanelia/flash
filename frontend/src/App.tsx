@@ -1,16 +1,15 @@
-import { useState } from 'react'
+import React from 'react';
+import PracticeView from './components/PracticeView';
+import './App.css'; 
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <h1>Vite + React</h1>
-      <button onClick={() => setCount((count) => count + 1)}>
-        count is {count}
-      </button>
-    </>
-  )
+    <div className="app-container">
+      <h1>Flashcard Learner</h1>
+      <PracticeView />
+      {/* Later, I might add routing components here */}
+    </div>
+  );
 }
 
 export default App;
