@@ -180,6 +180,7 @@ import { PracticeRecord } from '../types'; // Assuming PracticeRecord is in './t
 
 // Define the type for the history (an array of PracticeRecord)
 type PracticeHistory = PracticeRecord[];
+import { ProgressStats } from '../types'; // Import the type
 
 /**
  * Computes statistics about the user's learning progress.
@@ -196,25 +197,11 @@ type PracticeHistory = PracticeRecord[];
 export function computeProgress(
   buckets: Array<Set<Flashcard>>,
   history: PracticeHistory
-): {
-  totalCards: number;
-  masteredCards: number;
-  bucketCounts: number[];
-  averageDifficulty: number; // New statistic
-  cardsPracticed: number; // New statistic
-} {
-  if (!Array.isArray(buckets)) {
-    throw new Error('Buckets must be a defined array.');
-  }
-
-  if (!Array.isArray(history)) {
-    throw new Error('History must be a defined array of PracticeRecord.');
-  }
-
-  const progress = {
+): ProgressStats { // Use the ProgressStats interface as the return type
+  const progress: ProgressStats = {
     totalCards: 0,
     masteredCards: 0,
-    bucketCounts: [] as number[],
+    bucketCounts: [],
     averageDifficulty: 0,
     cardsPracticed: history.length,
   };
@@ -231,7 +218,6 @@ export function computeProgress(
     }
   });
 
-  // Calculate average difficulty from history
   if (history.length > 0) {
     history.forEach((record) => {
       totalDifficulty += record.difficulty;

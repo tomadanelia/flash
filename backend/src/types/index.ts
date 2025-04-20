@@ -12,6 +12,8 @@ export interface PracticeSession {
     totalCards: number;       // Total number of flashcards across all buckets
     masteredCards: number;    // Number of flashcards in the highest bucket (mastered cards)
     bucketCounts: number[];   // Array of counts representing the number of flashcards in each bucket
+    averageDifficulty: number; // New statistic
+    cardsPracticed: number;   // New statistic
   }
   export interface PracticeRecord {
     cardFront: string;          // Front of the flashcard

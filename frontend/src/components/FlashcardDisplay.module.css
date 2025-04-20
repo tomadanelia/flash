@@ -1,0 +1,41 @@
+.flashcard-container {
+    border: 1px solid #ccc;
+    padding: 16px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+  }
+  
+  .card-content {
+    cursor: pointer;
+    margin-bottom: 8px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .error {
+    color: red;
+    margin-top: 5px;
+  }
+  
+  .hint {
+    color: green;
+    margin-top: 5px;
+    font-style: italic;
+  }
+  
+  .hint button {
+    padding: 8px 12px;
+    cursor: pointer;
+    border: 1px solid #007bff;
+    background-color: #fff;
+    color: #007bff;
+    border-radius: 4px;
+  }
+  
+  .hint button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }

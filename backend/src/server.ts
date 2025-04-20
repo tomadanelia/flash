@@ -5,12 +5,14 @@ import * as state from './state';
 import { Flashcard, AnswerDifficulty } from '@logic/flashcards';
 import { PracticeRecord } from './types';
 import { Request, Response } from 'express';
-
+import { HintRequest } from './types';
+import { UpdateRequest } from './types';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+
 
 // GET /api/practice
 app.get('/api/practice', (req: Request, res: Response) => {
@@ -28,7 +30,7 @@ app.get('/api/practice', (req: Request, res: Response) => {
   }
 });
 
-app.post('/api/update', (req: Request, res: Response): void => {
+app.post('/api/update', (req: Request<{}, {}, UpdateRequest>, res: Response): void => {
   try {
     const { cardFront, cardBack, difficulty } = req.body;
 
@@ -67,7 +69,7 @@ app.post('/api/update', (req: Request, res: Response): void => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-app.get('/api/hint', (req: Request, res: Response) => {
+app.get('/api/hint', (req: Request<{}, {}, {}, HintRequest>, res: Response) => {
     try {
         const {cardFront,cardBack}= req.query;
         if(!cardFront || !cardBack || typeof cardBack!=='string' || typeof cardFront!=='string'){
