@@ -1,3 +1,4 @@
+import 'tsconfig-paths/register'; 
 import express from 'express';
 import cors from 'cors';
 import * as logic from '@logic/algorithm';
@@ -111,12 +112,12 @@ try {
 });
 
 
-app.get('/api/day/next', (req: Request, res: Response) => {
-    state.incrementDay();
-    const newDay = state.getCurrentDay();
-    console.log(`new day is ${newDay}`);
-    res.status(200).json({ message: "Day incremented successfully", newDay: newDay }); // Includes a success message
-  });
+app.post('/api/day/next', (req: Request, res: Response) => {
+  state.incrementDay();
+  const newDay = state.getCurrentDay();
+  console.log(`new day is ${newDay}`);
+  res.status(200).json({ message: "Day incremented successfully", newDay: newDay });
+});
   // Start Server:
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`); // Log message

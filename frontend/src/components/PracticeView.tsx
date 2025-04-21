@@ -54,16 +54,20 @@ const PracticeView=()=>{
               setError("Failed to submit answer.");
             }
           };
-          const handleNextDay= async () =>{
+          const handleNextDay = async () => {
             try {
-              const dayResult= await apiService.advanceDay();
+              setIsLoading(true);
+              setError(null);
+              const dayResult = await apiService.advanceDay();
               setDay(dayResult.currentDay);
               await loadPracticeCards();
-            } catch (error:any) {
+            } catch (error: any) {
               console.error("Error advancing day:", error);
-              //setError("Failed to advance to the next day."); // Set an error state
+              setError("Failed to advance to the next day.");
+            } finally {
+              setIsLoading(false);
             }
-          }
+          };
           return (
             <div>
               <h1>Practice Time!</h1>
