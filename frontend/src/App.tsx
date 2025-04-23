@@ -1,4 +1,4 @@
-import React from 'react';
+
 import PracticeView from './components/PracticeView';
 import './App.css'; 
 
