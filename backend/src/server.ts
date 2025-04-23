@@ -1,124 +1,42 @@
-import 'tsconfig-paths/register'; 
-import express from 'express';
+
+import 'tsconfig-paths/register';
+
+import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
-import * as logic from '@logic/algorithm';
-import * as state from './state';
-import { Flashcard, AnswerDifficulty } from '@logic/flashcards';
-import { PracticeRecord } from './types';
-import { Request, Response } from 'express';
-import { HintRequest } from './types';
-import { UpdateRequest } from './types';
-const app = express();
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
+
+// Initializing the Express application
+const app: Express = express();
+
+// Defining the port the server will listen on
+// Using PORT from .env file, or default to 3001 if not specified
 const PORT = process.env.PORT || 3001;
 
+// --- Global Middleware ---
+
+// Enable Cross-Origin Resource Sharing (CORS) for all origins
+// Allows your frontend (running on a different port) to talk to this backend
 app.use(cors());
+
+// Enable parsing of incoming JSON request bodies
+// Populates req.body for routes handling JSON payloads
 app.use(express.json());
 
-
-// GET /api/practice
-app.get('/api/practice', (req: Request, res: Response) => {
-  try {
-    const day = state.getCurrentDay();
-    const bucketsMap = state.getBuckets();
-    const bucketSets = logic.toBucketSets(bucketsMap);
-    const cardsSet = logic.practice(bucketSets, day);
-    const cardsArray = Array.from(cardsSet);
-    console.log(`Found ${cardsArray.length} cards for practice on day ${day}`);
-    res.json({ cards: cardsArray, day });
-  } catch (error) {
-    console.error('Error in /api/practice:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+// --- Basic Test Route ---
+// A simple route to check if the server is running
+app.get('/', (req: Request, res: Response) => {
+  res.send('Hello from Flashcard Backend!');
 });
 
-app.post('/api/update', (req: Request<{}, {}, UpdateRequest>, res: Response): void => {
-  try {
-    const { cardFront, cardBack, difficulty } = req.body;
+// --- API Routes (Placeholder - Will be added later) ---
+// Example: app.use('/api/days', dayRoutes);
+// Example: app.use('/api/practice', practiceRoutes);
+// ... and so on
 
-    if (!Object.values(AnswerDifficulty).includes(difficulty)) {
-      res.status(400).json({ error: 'Invalid difficulty value' });
-      return;
-    }
-
-    const card = state.findCard(cardFront, cardBack);
-    if (!card) {
-      res.status(404).json({ error: 'Card not found' });
-      return;
-      
-    }
-
-    const currentBuckets = state.getBuckets();
-    const previousBucket = state.findCardBucket(card);
-    const updatedBuckets = logic.update(currentBuckets, card, difficulty);
-    state.setBuckets(updatedBuckets);
-    const newBucket = state.findCardBucket(card);
-
-    const record: PracticeRecord = {
-      cardFront: card.front, // Use card.front
-      cardBack: card.back,   // Use card.back
-      difficulty,
-      timestamp: Date.now(),
-      previousBucket,
-      newBucket,
-    };
-    state.addHistoryRecord(record);
-
-    console.log(`Card updated. Difficulty: ${difficulty}, From: ${previousBucket} → To: ${newBucket}`);
-    res.status(200).json({ message: 'Card updated successfully' });
-  } catch (error) {
-    console.error('Error in /api/update:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-app.get('/api/hint', (req: Request<{}, {}, {}, HintRequest>, res: Response) => {
-    try {
-        const {cardFront,cardBack}= req.query;
-        if(!cardFront || !cardBack || typeof cardBack!=='string' || typeof cardFront!=='string'){
-            res.status(400).json({ error: 'Missing or invalid cardFront or cardBack' });
-            return;
-        }
-        const card = state.findCard(cardFront, cardBack);
-        if (!card) {
-            res.status(404).json({ error: 'Card not found' });
-            return;
-            
-          }
-          const hint=logic.getHint(card);
-          console.log(`Hint requested for card: Front - ${cardFront}, Back - ${cardBack}`);
-          res.json({ hint });
-
-    
-        
-    } catch (error) {
-        console.error('Error in /api/hint:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
-app.get('/api/progress',(req : Request,res : Response)=>{
-
-try {
-      
-    const bucketsMap = state.getBuckets();
-    const bucketSets = logic.toBucketSets(bucketsMap);
-    const history = state.getHistory();
-    const progress = logic.computeProgress(bucketSets,history);
-    res.json({progress})
-    
-} catch (error) {
-    console.error('Error in /api/progress:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-}
-});
-
-
-app.post('/api/day/next', (req: Request, res: Response) => {
-  state.incrementDay();
-  const newDay = state.getCurrentDay();
-  console.log(`new day is ${newDay}`);
-  res.status(200).json({ message: "Day incremented successfully", newDay: newDay });
-});
-  // Start Server:
+// --- Start the Server ---
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`); // Log message
-  });
+  console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`);
+});
