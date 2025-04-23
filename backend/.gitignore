@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Compiled output
+dist/
+
+# Environment variables (secrets)
+.env
+
+# Optional: Logs
+*.log
+logs/
+
+# Optional: OS generated files
+.DS_Store
+Thumbs.db

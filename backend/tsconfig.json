@@ -1,22 +1,37 @@
 {
     "compilerOptions": {
-      "target": "ES2016", // Compile to modern JavaScript
-      "module": "CommonJS", // Use Node.js module system
-      "outDir": "./dist", // Output compiled JS to 'dist' folder
-      "rootDir": "./src", // Source TS files are in 'src'
-      "strict": true, // Enable strict type checking
-      "esModuleInterop": true, // Allow default imports from CommonJS modules
-      "skipLibCheck": true, // Skip type checking of declaration files
-      "forceConsistentCasingInFileNames": true, // Prevent case-related bugs
-      "resolveJsonModule": true, // Allow importing JSON files
-      "baseUrl": "./", // Base directory for module resolution
-      "paths": {
-        // Define path aliases for cleaner imports
-        "@logic/*": ["src/logic/*"],
-        "@types/*": ["src/types/*"]
-      }
-    },
-    "include": ["src/**/*"], // Compile all files in 'src'
-    "exclude": ["node_modules"] // Don't compile node_modules
-  }
+      /* Basic Options */
+      "target": "ES2016",                   // Specify ECMAScript target version (Node.js compatibility)
+      "module": "CommonJS",                 // Specify module code generation (standard for Node.js)
+      "outDir": "./dist",                   // Redirect output structure to the directory.
+      "rootDir": "./src",                   // Specify the root directory of input files.
   
+      /* Strict Type-Checking Options */
+      "strict": true,                       // Enable all strict type-checking options.
+  
+      /* Module Resolution Options */
+      "moduleResolution": "node",           // Classic Node.js module resolution. Needed for CommonJS.
+      "baseUrl": "./",                      // Base directory to resolve non-absolute module names. Crucial for paths.
+      "paths": {                            // Specify path mapping relative to baseUrl.
+        "@db/*": ["src/db/*"],
+        "@handlers/*": ["src/handlers/*"],
+        "@routes/*": ["src/routes/*"],
+        "@utils/*": ["src/utils/*"]
+        // You might add "@types/*": ["src/types/*"] later if you create shared types
+      },
+      "resolveJsonModule": true,            // Include modules imported with '.json' extension.
+      "esModuleInterop": true,              // Enables compatibility with CommonJS modules (like Express).
+  
+      /* Advanced Options */
+      "skipLibCheck": true,                 // Skip type checking of declaration files. Speeds up compilation.
+      "forceConsistentCasingInFileNames": true // Disallow inconsistently-cased references to the same file.
+      // "sourceMap": true,                 // Optional: uncomment if you want source maps for debugging
+    },
+    "include": [
+      "src/**/*"                          // Compile all TypeScript files within the src directory.
+    ],
+    "exclude": [
+      "node_modules",                     // Don't compile anything in node_modules.
+      "dist"                              // Don't accidentally include compiled output as input.
+    ]
+  }
