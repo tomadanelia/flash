@@ -4,13 +4,14 @@ import 'tsconfig-paths/register';
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import dayRoutes from '@routes/dayRoutes';
 
-// Load environment variables from .env file
+
 dotenv.config();
 
 // Initializing the Express application
 const app: Express = express();
-
+export {app};
 // Defining the port the server will listen on
 // Using PORT from .env file, or default to 3001 if not specified
 const PORT = process.env.PORT || 3001;
@@ -26,17 +27,15 @@ app.use(cors());
 app.use(express.json());
 
 // --- Basic Test Route ---
-// A simple route to check if the server is running
+
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from Flashcard Backend!');
 });
 
 // --- API Routes (Placeholder - Will be added later) ---
-// Example: app.use('/api/days', dayRoutes);
+app.use('/api/day', dayRoutes);
 // Example: app.use('/api/practice', practiceRoutes);
-// ... and so on
 
-// --- Start the Server ---
 app.listen(PORT, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`);
 });
