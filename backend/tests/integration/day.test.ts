@@ -2,9 +2,8 @@
  /// <reference types="jest" />
  import 'tsconfig-paths/register';
 import request from 'supertest';
-import { app } from '../../src/server'; 
+import app from '../../src/app';  // instead of importing from server
 import supabase  from '../../src/db/supabaseClient';
-import { SupabaseClient } from '@supabase/supabase-js'; 
 
 
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
@@ -46,6 +45,18 @@ describe('POST /api/day/next Integration Tests', () => {
         throw error; 
     }
   });
+  afterEach(async () => {
+    // Restore the row if it was deleted
+    const { data } = await supabase
+      .from('system_state')
+      .select('id')
+      .eq('id', 1)
+      .single();
+
+    if (!data) {
+      await supabase.from('system_state').insert({ id: 1, current_day: 0 });
+    }
+  });
 
 
 
@@ -56,5 +67,28 @@ describe('POST /api/day/next Integration Tests', () => {
      const { data } = await supabase.from('system_state').select('current_day').eq('id', 1).single();
      expect(data?.current_day).toBe(1);
     });
+
+    test('POST /api/day/next should return 500 if system_state row with id=1 is missing', async () => {
+      // Delete the row with id=1
+      const { error: deleteError } = await supabase
+        .from('system_state')
+        .delete()
+        .eq('id', 1);
+    
+      if (deleteError) {
+        console.error('Error deleting row in test:', deleteError);
+        throw new Error('Failed to delete system_state row for test setup');
+      }
+    
+      // Send the request
+      const response = await request(app).post('/api/day/next');
+    
+      // Assert response is 500 and contains error message
+      expect(response.statusCode).toBe(500);
+      expect(response.body).toHaveProperty('error');
+      expect(response.body.error).toMatch(/failed to advance day/i);
+    
+    });
+
 
 });
