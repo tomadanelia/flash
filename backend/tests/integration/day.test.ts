@@ -26,9 +26,9 @@ describe('POST /api/day/next Integration Tests', () => {
           console.log("Succesful connection setup.Starting with deletion")
       } catch (error) {
         console.error('BeforeEach: Test database could not be reached.', error);
-        throw error; // Abort all tests if setup fails
+        throw error; 
       }
-    // Crucial: Reset the system_state.current_day to 0 before each test
+    
     try {
         const { error: updateError } = await supabase
         .from('system_state')

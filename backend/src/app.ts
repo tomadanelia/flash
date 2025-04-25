@@ -2,7 +2,9 @@ import 'tsconfig-paths/register';
 import express, { Express,Request,Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import dayRoutes from '@routes/dayRoutes';
+import dayRouter from '@routes/dayRoutes';
+import practiceRouter from '@routes/practiceRoutes';
+
 
 dotenv.config();
 
@@ -13,6 +15,6 @@ app.use(express.json());
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from Flashcard Backend!');
 });
-app.use('/api/day', dayRoutes);
-
+app.use('/api/day', dayRouter);
+app.use('/api/practice', practiceRouter); // <-- Mount the practice router HERE
 export default app;
