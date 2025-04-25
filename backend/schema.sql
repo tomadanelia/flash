@@ -60,3 +60,30 @@ COMMENT ON TABLE practice_history IS 'Logs each practice attempt, linking back t
 
 -- Optional: Index on flashcard_id for faster lookups if needed later
 -- CREATE INDEX IF NOT EXISTS idx_practice_history_flashcard_id ON practice_history(flashcard_id);
+
+CREATE OR REPLACE FUNCTION get_practice_cards(practice_day bigint)
+RETURNS TABLE(id uuid, front_text text, back_text text, hint_text text, tags text[])
+LANGUAGE plpgsql
+set search_path=public
+AS $$
+BEGIN
+  -- The core query logic from the specification
+  RETURN QUERY
+  SELECT
+    f.id,
+    f.front_text,
+    f.back_text,
+    f.hint_text,
+    f.tags
+  FROM
+    public.flashcards f -- Explicitly reference the public schema
+  WHERE
+    f.current_bucket = 0
+    OR (
+      f.current_bucket > 0
+      AND practice_day % CAST(POW(2, f.current_bucket) AS bigint) = 0
+    );
+END;
+$$;
+
+COMMENT ON FUNCTION get_practice_cards(bigint) IS 'Retrieves flashcards due for practice on a specific day based on their current bucket and the Modified-Leitner algorithm.';
