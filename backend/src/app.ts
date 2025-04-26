@@ -15,6 +15,7 @@ app.use(express.json());
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from Flashcard Backend!');
 });
+//these connect routes to routers that connect them to handlers
 app.use('/api/day', dayRouter);
 app.use('/api/practice', practiceRouter); // <-- Mount the practice router HERE
 export default app;
