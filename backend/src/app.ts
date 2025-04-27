@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import dayRouter from '@routes/dayRoutes';
 import practiceRouter from '@routes/practiceRoutes';
+import updateRouter from '@routes/updateRoutes';
 
 
 dotenv.config();
@@ -17,5 +18,6 @@ app.get('/', (req: Request, res: Response) => {
 });
 //these connect routes to routers that connect them to handlers
 app.use('/api/day', dayRouter);
-app.use('/api/practice', practiceRouter); // <-- Mount the practice router HERE
+app.use('/api/practice', practiceRouter); 
+app.use('/api/update',updateRouter);
 export default app;
