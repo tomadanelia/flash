@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import dayRouter from '@routes/dayRoutes';
 import practiceRouter from '@routes/practiceRoutes';
 import updateRouter from '@routes/updateRoutes';
+import cardRouter from '@routes/cardManagementRoutes';
 
 
 dotenv.config();
@@ -19,5 +20,5 @@ app.get('/', (req: Request, res: Response) => {
 //these connect routes to routers that connect them to handlers
 app.use('/api/day', dayRouter);
 app.use('/api/practice', practiceRouter); 
-app.use('/api/update',updateRouter);
+app.use('/api/update',cardRouter);
 export default app;
