@@ -1,7 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 
-// Load environment variables from the .env file in the project root
+// Load environment variables from the .env file in the project root/
 dotenv.config();
 // Retrieve the Supabase URL and Anon Key from environment variables
 const supabaseUrl: string | undefined = process.env.SUPABASE_URL;
