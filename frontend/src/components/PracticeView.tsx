@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Flashcard, AnswerDifficulty } from "../types";
-import apiService from "../services/api";
+import apiService, { AnswerDifficultyString } from "../services/api";
 import FlashcardDisplay from "./FlashcardDisplay";
 const PracticeView=()=>{
     const [practiceCards,setPracticeCards]=useState<Flashcard[]>([]);
@@ -37,11 +37,11 @@ const PracticeView=()=>{
         const handleShowBack = (): void => {
             setShowBack(true);
           };
-          const handleAnswer = async (difficulty: AnswerDifficulty) => {
+          const handleAnswer = async (difficulty: AnswerDifficultyString,id: string) => {
             try {
               if (practiceCards.length > 0) {
                 const currentCard = practiceCards[currentIndex];
-                await apiService.submitAnswer(currentCard.front, currentCard.back, difficulty);
+                await apiService.submitAnswer(id, difficulty);
                 setShowBack(false);
                 if (currentIndex < practiceCards.length - 1) {
                     setCurrentIndex(currentIndex + 1); // Move to the next card
@@ -92,9 +92,9 @@ const PracticeView=()=>{
                     <div>
                       <p>{practiceCards[currentIndex]?.back || "???"}</p>
                       <div>
-                        <button onClick={() => handleAnswer(AnswerDifficulty.Easy)}>Easy</button>
-                        <button onClick={() => handleAnswer(AnswerDifficulty.Hard)}>Hard</button>
-                        <button onClick={() => handleAnswer(AnswerDifficulty.Wrong)}>Wrong</button>
+                        <button onClick={() => handleAnswer('Easy','ada')}>Easy</button>
+                        <button onClick={() => handleAnswer('Easy','ada')}>Hard</button>
+                        <button onClick={() => handleAnswer('Easy','ada')}>Wrong</button>
                         <button onClick={() => setShowBack(false)}>Show Front</button>
                       </div>
                     </div>
