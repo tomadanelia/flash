@@ -10,6 +10,7 @@ import { PracticeCard } from '@db/practiceService';
 // - Day 4: Buckets 0, 1, 2 due
 // - No due cards
 // - Database failure case
+//this test uses test database
 
 async function seedFlashcards(cards: Array<{ front_text: string, back_text: string, current_bucket: number }>) {
     const { error: deleteError } = await supabase.from('flashcards').delete().neq('id', '00000000-0000-0000-0000-000000000000');
