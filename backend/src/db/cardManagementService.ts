@@ -33,6 +33,13 @@ export interface ShortCardData {
     hint?: string | null;  
     tags?: ReadonlyArray<string> | null; 
 }
+/**
+ * Creates a new flashcard in the database.
+ * 
+ * @param {ShortCardData} data - The front, back, optional hint, and tags for the flashcard.
+ * @returns {Promise<Flashcard>} The newly created flashcard with metadata.
+ * @throws {Error} If the insert operation fails or no data is returned.
+ */
 
 export async function createFlashcard(data: ShortCardData): Promise<Flashcard> {
     const { data: insertedData, error: insertError } = await supabase
@@ -68,7 +75,15 @@ export async function createFlashcard(data: ShortCardData): Promise<Flashcard> {
 
     return flashcard;
 }
-
+/**
+ * Updates an existing flashcard by its ID.
+ * 
+ * @param {string} id - The UUID of the flashcard to update.
+ * @param {ShortCardData} data - The new front, back, optional hint, and tags.
+ * @returns {Promise<Flashcard>} The updated flashcard.
+ * @throws {NotFoundError} If no flashcard with the given ID is found.
+ * @throws {Error} If a database error occurs during the update.
+ */
 
 export async function updateFlashcard(id: string, data: ShortCardData): Promise<Flashcard> {
     const updatePayload = {
@@ -112,3 +127,38 @@ export async function updateFlashcard(id: string, data: ShortCardData): Promise<
       updated_at:   updatedData.updated_at,
     };
   }
+
+/**
+ * @function fetchHint
+ * @async
+ * @description Fetches the hint text for a specific flashcard by its ID.
+ *
+ * @param {string} id - The UUID of the flashcard for which to fetch the hint.
+ *
+ * @returns {Promise<string | null>} A promise that resolves with the hint text string
+ *          if it exists, or `null` if the flashcard has no hint text set in the database.
+ *
+ * @throws {NotFoundError} If no flashcard with the specified `id` is found.
+ * @throws {Error} If the database query fails for other reasons.
+ */
+export async function fetchHint(id: string): Promise<string | null> {
+   
+    const { data, error } = await supabase
+        .from('flashcards')
+        .select('hint_text') 
+        .eq('id', id)        
+        .maybeSingle();      
+
+    if (error) {
+       
+        throw new Error(`Database error fetching hint: ${error.message}`);
+    }
+
+    
+    if (!data) {
+       
+        throw new NotFoundError(`Flashcard with ID ${id} not found.`);
+    }
+
+    return data.hint_text;
+}
