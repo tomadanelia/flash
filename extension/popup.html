@@ -3,40 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Flashcard Creator</title>
-    <!-- Link to popup styles -->
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
     <h3>Create/Update Flashcard</h3>
-    <!-- Add ID to the form -->
     <form id="flashcard-form">
         <div>
             <label for="cardFront">Front:</label>
-            <!-- Add ID -->
             <textarea id="cardFront" name="cardFront" required></textarea>
         </div>
         <div>
             <label for="cardBack">Back:</label>
-            <!-- Add ID -->
             <textarea id="cardBack" name="cardBack" required></textarea>
         </div>
         <div>
             <label for="hint">Hint (Optional):</label>
-            <!-- Add ID -->
+            
             <input type="text" id="hint" name="hint">
         </div>
          <div>
             <label for="tags">Tags (Optional, comma-separated):</label>
-            <!-- Add ID -->
+            
             <input type="text" id="tags" name="tags" placeholder="e.g., history, science">
         </div>
-        <!-- Add ID for potential interaction -->
         <button type="submit" id="saveButton">Save Card</button>
     </form>
-    <!-- Add ID for the message area -->
     <div id="messageArea" class="message"></div>
 
-    <!-- Point to COMPILED JavaScript -->
     <script src="dist/popup.js"></script>
 </body>
 </html>
