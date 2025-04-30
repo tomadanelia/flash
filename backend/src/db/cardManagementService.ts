@@ -71,42 +71,44 @@ export async function createFlashcard(data: ShortCardData): Promise<Flashcard> {
 
 
 export async function updateFlashcard(id: string, data: ShortCardData): Promise<Flashcard> {
-
-   const updatePayload = {
-       front_text: data.front,
-       back_text: data.back,
-       hint_text: data.hint ?? null,
-       tags: data.tags ?? [], 
-       
-   };
-
-   const { data: updatedData, error: updateError } = await supabase
-       .from('flashcards')
-       .update(updatePayload)
-       .eq('id', id)
-       .select('id, front_text, back_text, hint_text, tags, current_bucket, created_at, updated_at') // Select all needed fields
-       .single(); 
-
-   if (updateError) {
-       throw new Error(`Database error when updating flashcard: ${updateError.message}`);
-   }
-
-   
-   if (!updatedData) {
-       throw new NotFoundError(`Flashcard with ID ${id} not found.`);
-   }
-
-   
-   const returnedCard: Flashcard = {
-       id: updatedData.id,
-       front: updatedData.front_text,
-       back: updatedData.back_text,
-       hint: updatedData.hint_text,
-       tags: updatedData.tags ?? [], 
-       current_bucket: updatedData.current_bucket,
-       created_at: updatedData.created_at,
-       updated_at: updatedData.updated_at, 
-   };
-
-   return returnedCard;
-}
+    const updatePayload = {
+      front_text: data.front,
+      back_text: data.back,
+      hint_text: data.hint ?? null,
+      tags: data.tags ?? [],
+    };
+  
+    // perform the update + select(*).single()
+    const { data: updatedData, error: updateError } = await supabase
+      .from('flashcards')
+      .update(updatePayload)
+      .eq('id', id)
+      .select('id, front_text, back_text, hint_text, tags, current_bucket, created_at, updated_at')
+      .single();
+  
+    if (updateError) {
+      const msg = updateError.message.toLowerCase();
+      // PostgREST will often return an error when no rows match—treat that as "not found"
+      if (msg.includes('no rows') || msg.includes('did not affect any rows')) {
+        throw new NotFoundError(`Flashcard with ID ${id} not found.`);
+      }
+      // otherwise, it's a true DB failure
+      throw new Error(`Database error when updating flashcard: ${updateError.message}`);
+    }
+  
+    // In case Supabase ever returns no error but also no data
+    if (!updatedData) {
+      throw new NotFoundError(`Flashcard with ID ${id} not found.`);
+    }
+  
+    return {
+      id:           updatedData.id,
+      front:        updatedData.front_text,
+      back:         updatedData.back_text,
+      hint:         updatedData.hint_text,
+      tags:         updatedData.tags ?? [],
+      current_bucket: updatedData.current_bucket,
+      created_at:   updatedData.created_at,
+      updated_at:   updatedData.updated_at,
+    };
+  }
