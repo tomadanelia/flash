@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { handleCreateFlashcard, handleUpdateFlashcard } from '@handlers/cardManagementHandlers';
+import { handleCreateFlashcard, handleGetHint, handleUpdateFlashcard } from '@handlers/cardManagementHandlers';
 /**
  * Express cardRouter for new flashcard-related API endpoints.
  * Base path: /api/flashcards (defined when mounting in app.ts)
@@ -8,4 +8,6 @@ import { handleCreateFlashcard, handleUpdateFlashcard } from '@handlers/cardMana
 const cardRouter = Router();
 cardRouter.post('/', handleCreateFlashcard);
 cardRouter.put('/:id', handleUpdateFlashcard);
+cardRouter.get('/:id/hint', handleGetHint); 
+
 export default cardRouter;
