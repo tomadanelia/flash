@@ -1,0 +1,25 @@
+
+{
+    "compilerOptions": {
+      "target": "ES2017", 
+      "module": "ESNext", 
+      "outDir": "./dist",    
+      "rootDir": "./",      
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "noEmitOnError": true, 
+      "moduleResolution": "node", 
+      "lib": ["ES2017", "DOM"], 
+      "types": ["chrome", "node"] 
+    },
+    "include": [
+      "*.ts" 
+      
+    ],
+    "exclude": [
+      "node_modules",
+      "dist"
+    ]
+  }
