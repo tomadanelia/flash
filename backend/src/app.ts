@@ -19,7 +19,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 //these connect routes to routers that connect them to handlers
 app.use('/api/day', dayRouter);
-app.use('/api/practice', practiceRouter); 
+app.use('/api/practice', practiceRouter);
 app.use('/api/update',updateRouter);
-app.use('/api/flashcars',cardRouter);
+app.use('/api/flashcards',cardRouter);
 export default app;
