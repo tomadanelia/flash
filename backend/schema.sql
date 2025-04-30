@@ -87,3 +87,66 @@ END;
 $$;
 
 COMMENT ON FUNCTION get_practice_cards(bigint) IS 'Retrieves flashcards due for practice on a specific day based on their current bucket and the Modified-Leitner algorithm.';
+
+
+
+CREATE OR REPLACE FUNCTION get_cards_per_bucket()
+RETURNS TABLE(bucket_number int, card_count bigint)
+LANGUAGE sql
+AS $$
+    SELECT
+        f.current_bucket::int as bucket_number,
+        COUNT(f.id)::bigint as card_count
+    FROM
+        public.flashcards f
+    GROUP BY
+        f.current_bucket
+    ORDER BY
+        bucket_number;
+$$;
+
+COMMENT ON FUNCTION get_cards_per_bucket() IS 'Returns the count of flashcards grouped by their current bucket number.';
+
+
+    CREATE OR REPLACE FUNCTION count_cards_due_today(practice_day bigint)
+    RETURNS bigint
+    LANGUAGE sql
+    AS $$
+        SELECT COUNT(f.id)::bigint
+        FROM public.flashcards f
+        WHERE f.current_bucket = 0
+          OR (
+               f.current_bucket > 0
+               AND practice_day % CAST(POW(2, f.current_bucket) AS bigint) = 0
+             );
+    $$;
+
+    COMMENT ON FUNCTION count_cards_due_today(bigint) IS 'Counts flashcards due for practice on a specific day based on the Modified-Leitner algorithm.';
+    
+
+    
+CREATE OR REPLACE FUNCTION get_recall_accuracy_stats(
+    start_date text, -- Expected 'YYYY-MM-DD'
+    end_date text   -- Expected 'YYYY-MM-DD'
+)
+RETURNS TABLE(difficulty text, attempt_count bigint)
+LANGUAGE sql
+SET search_path = public
+AS $$
+    SELECT
+        ph.difficulty,
+        COUNT(ph.id)::bigint as attempt_count
+    FROM
+        public.practice_history ph
+    WHERE
+        -- Convert input dates to timestamps and ensure range is inclusive
+        -- Start date is inclusive from the beginning of the day
+        -- End date is inclusive until the very end of the day
+        ph.practiced_at >= start_date::timestamptz
+        AND ph.practiced_at < (end_date::date + interval '1 day')::timestamptz
+    GROUP BY
+        ph.difficulty;
+$$;
+
+COMMENT ON FUNCTION get_recall_accuracy_stats(text, text) IS 'Returns counts of practice attempts grouped by difficulty within a specified date range (inclusive).';
+

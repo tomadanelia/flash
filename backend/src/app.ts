@@ -6,6 +6,7 @@ import dayRouter from '@routes/dayRoutes';
 import practiceRouter from '@routes/practiceRoutes';
 import updateRouter from '@routes/updateRoutes';
 import cardRouter from '@routes/cardManagementRoutes';
+import progressRouter from '@routes/progressRoutes';
 
 
 dotenv.config();
@@ -22,4 +23,5 @@ app.use('/api/day', dayRouter);
 app.use('/api/practice', practiceRouter);
 app.use('/api/update',updateRouter);
 app.use('/api/flashcards',cardRouter);
+app.use('/api/progress',progressRouter);
 export default app;
