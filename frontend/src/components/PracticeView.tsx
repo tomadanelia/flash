@@ -136,7 +136,7 @@ const PracticeView = () => {
   const currentCard = practiceCards[currentIndex]; // Get current card for rendering
 
   return (
-    <div /*className={styles.practiceContainer}*/>
+    <div style={{display:"flex", flexDirection: "column"}}>
       <h1>Practice Time!</h1>
       <p>Day: {day}</p>
 
@@ -162,9 +162,9 @@ const PracticeView = () => {
           <FlashcardDisplay card={currentCard} showBack={showBack} />
 
           {!showBack ? (
-            <button onClick={handleShowBack}>Show Answer</button>
+            <button style={{marginTop:'20px'}} onClick={handleShowBack}>Show Answer</button>
           ) : (
-            <div>
+            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', flexDirection: 'row' }}>
               {/* Buttons correctly call handleAnswer with difficulty string */}
               <button onClick={() => handleAnswer('Easy')} disabled={isLoading}>Easy</button>
               <button onClick={() => handleAnswer('Hard')} disabled={isLoading}>Hard</button>
