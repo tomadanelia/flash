@@ -1,10 +1,9 @@
 
 import axios from 'axios';
 // TODO: Update types in types/index.ts to match new backend shapes
-import { PracticeSession, Flashcard, ProgressStats, UpdateRequest, AnswerDifficulty } from '../types'; 
+import { PracticeSession, Flashcard, ProgressStats, UpdatePracticeRequest, AnswerDifficultyString } from '../types'; 
 
 // Define expected difficulty string type based on backend API
-type AnswerDifficultyString = 'Easy' | 'Hard' | 'Wrong';
 
 // Define placeholder types for new/updated interfaces (will be properly defined in types/index.ts later)
 // TODO: Define these properly in types/index.ts
@@ -37,10 +36,11 @@ const apiService = {
    * Response includes card IDs now.
    * GET /api/practice
    */
-  async fetchPracticeCards(): Promise<PracticeApiResponse> { // Updated return type promise
+  async fetchPracticeCards(): Promise<PracticeApiResponse> {
     try {
-      // Updated generic type to reflect expected response with card IDs
-      const response = await apiClient.get<PracticeApiResponse>('/practice'); 
+      const url = '/practice';
+      console.log("Fetching from:", `<span class="math-inline">\{apiClient\.defaults\.baseURL\}</span>{url}`); // Log the full URL
+      const response = await apiClient.get<PracticeApiResponse>(url);
       return response.data;
     } catch (error: any) {
       console.error('Error fetching practice cards:', error);
