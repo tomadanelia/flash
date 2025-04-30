@@ -1,35 +1,56 @@
-// extension/background.ts
-
 console.log("Background service worker started (background.ts).");
 
-// Define backend base URL (consider making this configurable later)
-// Ensure this matches where your backend is running!
-const API_BASE_URL = 'http://localhost:3001/api'; // Adjust port if needed
+const API_BASE_URL = 'http://localhost:3001/api';
+const TEMP_SELECTED_TEXT_KEY = 'tempSelectedText';
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log("Background: Received message:", request);
 
-    if (request.action === "saveCard" || request.action === "updateCard") {
-        const cardData = request.data; // { front, back, hint, tags }
-        const cardId = request.cardId; // Only present for updateCard
+    if (request.action === "initiateCardCreation") {
+        console.log("Background: Received initiateCardCreation request.");
+        const selectedText = request.selectedText;
+
+        if (selectedText) {
+            console.log("Background: Storing selected text:", selectedText);
+            (async () => {
+                try {
+                    await chrome.storage.local.set({ [TEMP_SELECTED_TEXT_KEY]: selectedText });
+                    console.log("Background: Selected text stored successfully.");
+                    await chrome.action.openPopup();
+                    console.log("Background: Popup opened.");
+                    sendResponse({ success: true, message: "Popup opened with text stored." });
+                } catch (error: any) {
+                    console.error("Background: Error storing text or opening popup:", error);
+                    sendResponse({ success: false, message: `Error: ${error.message}` });
+                }
+            })();
+            return true;
+        } else {
+            console.warn("Background: Received initiateCardCreation but no selectedText provided.");
+            sendResponse({ success: false, message: "No text received." });
+            return false;
+        }
+    }
+
+    else if (request.action === "saveCard" || request.action === "updateCard") {
+        const cardData = request.data;
+        const cardId = request.cardId;
         const isUpdate = request.action === "updateCard";
 
-        // --- Make the REAL API Call ---
-        (async () => { // Use an async IIFE (Immediately Invoked Function Expression)
-            let responseData: any; // To hold the final response sent back to popup
+        (async () => {
+            let responseData: any;
             try {
                 const apiUrl = isUpdate
-                    ? `${API_BASE_URL}/flashcards/${cardId}` // URL for PUT
-                    : `${API_BASE_URL}/flashcards`;        // URL for POST
+                    ? `${API_BASE_URL}/flashcards/${cardId}`
+                    : `${API_BASE_URL}/flashcards`;
 
-                const method = isUpdate ? 'PUT' : 'POST'; // Correct HTTP method
+                const method = isUpdate ? 'PUT' : 'POST';
 
-                // Prepare body expected by the backend handler
                 const bodyToSend = {
                     cardFront: cardData.front,
                     cardBack: cardData.back,
-                    hint: cardData.hint, // Pass hint as is (null or string)
-                    tags: cardData.tags   // Pass tags array as is
+                    hint: cardData.hint,
+                    tags: cardData.tags
                 };
 
                 console.log(`Background: Making ${method} request to ${apiUrl}`);
@@ -47,46 +68,47 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
                 let responseBody;
                 try {
-                     responseBody = await response.json();
-                     console.log("Background: Parsed API response body:", responseBody);
+                    responseBody = await response.json();
+                    console.log("Background: Parsed API response body:", responseBody);
                 } catch (e) {
-                     console.warn("Background: Could not parse API response as JSON.", await response.text());
-                     responseBody = null; // Or handle text response
+                    console.warn("Background: Could not parse API response as JSON.", await response.text());
+                    responseBody = null;
                 }
-
 
                 if (!response.ok) {
-                    // Handle HTTP errors (4xx, 5xx)
                     const errorMsg = responseBody?.message || responseBody?.error || `HTTP error ${response.status}`;
-                    throw new Error(errorMsg); // Throw an error to be caught below
+                    throw new Error(errorMsg);
                 }
 
-                // Success case (200 OK for PUT, 201 Created for POST)
                 responseData = {
                     success: true,
-                    card: responseBody // Backend returns the created/updated card
+                    card: responseBody
                 };
 
             } catch (error: any) {
                 console.error(`Background: API call failed for ${request.action}:`, error);
                 responseData = {
                     success: false,
-                    message: `API Error: ${error.message}` // Send error message back
+                    message: `API Error: ${error.message}`
                 };
             }
 
             console.log("Background: Sending response back to sender:", responseData);
-            sendResponse(responseData); // Send the result back to the popup
+            sendResponse(responseData);
 
-        })(); // Immediately invoke the async function
+        })();
 
-        return true; // IMPORTANT: Keep message channel open for async response
-        // --- End REAL API Call ---
-
+        return true;
     }
-    // Handle other actions if needed...
 });
 
 chrome.runtime.onInstalled.addListener(() => {
     console.log('Flashcard Creator extension installed/updated.');
+    chrome.storage.local.remove(TEMP_SELECTED_TEXT_KEY, () => {
+        if (chrome.runtime.lastError) {
+            console.error("Error clearing temp storage on install:", chrome.runtime.lastError);
+        } else {
+            console.log("Temporary storage cleared on install/update.");
+        }
+    });
 });
