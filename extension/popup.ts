@@ -1,4 +1,3 @@
-console.log("Popup script loaded (popup.ts).");
 
 const POPUP_TEMP_SELECTED_TEXT_KEY = 'tempSelectedText';
 
@@ -50,20 +49,16 @@ function disableForm(disabled: boolean) {
         const result = await chrome.storage.local.get(POPUP_TEMP_SELECTED_TEXT_KEY);
         if (result && result[POPUP_TEMP_SELECTED_TEXT_KEY]) {
             const storedText = result[POPUP_TEMP_SELECTED_TEXT_KEY];
-            console.log("Popup: Found stored text:", storedText);
             if (backInput) {
                 backInput.value = storedText;
-                console.log("Popup: Pre-filled 'Back' textarea.");
             } else {
                 console.error("Popup: Could not find 'Back' textarea element to pre-fill.");
             }
             await chrome.storage.local.remove(POPUP_TEMP_SELECTED_TEXT_KEY);
-            console.log("Popup: Removed temporary text from storage.");
         } else {
             console.log("Popup: No pre-filled text found in storage.");
         }
     } catch (error: any) {
-        console.error("Popup: Error accessing storage:", error);
         showMessage("Error retrieving selected text.", "error");
     }
 })();
@@ -97,25 +92,19 @@ if (form) {
             cardId: currentCardId,
             data: cardData
         };
-
-        console.log('Popup: Sending message to background:', message);
-
         try {
             const response: BackgroundResponse | undefined = await chrome.runtime.sendMessage(message);
-            console.log('Popup: Received response from background:', response);
 
             if (response?.success && response.card) {
                 showMessage(`Card ${message.action === 'updateCard' ? 'updated' : 'created'} successfully!`, 'success');
                 if (message.action === 'saveCard' && response.card.id) {
                     currentCardId = response.card.id;
-                    console.log("Popup: Stored new card ID for this session:", currentCardId);
                     if (saveButton) saveButton.textContent = "Update Card";
                 }
             } else {
                 showMessage(response?.message || 'Failed to save card. Background script error.', 'error');
             }
         } catch (error: any) {
-            console.error("Popup: Error sending message or receiving response:", error);
             showMessage(`Error communicating with extension background: ${error.message}`, 'error');
         } finally {
             disableForm(false);
@@ -125,4 +114,3 @@ if (form) {
     console.error("Popup: Could not find the flashcard form element.");
 }
 
-console.log("Popup script execution finished.");
