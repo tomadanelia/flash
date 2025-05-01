@@ -1,4 +1,6 @@
 // frontend/src/components/ProgressView.tsx
+import './ProgressView.css';
+
 import React, { useState, useEffect } from 'react';
 
 // Import the API service (make sure fetchProgress exists and is correctly defined there)
@@ -134,86 +136,73 @@ const ProgressView: React.FC = () => {
   // --- Render the Component UI ---
   return (
     <>
-    <div style={{marginTop: '20px'}}> 
-        <button onClick={handleClick}>
-        {isVisible ? 'Hide Div' : 'Show Div'}
-          </button>  
-   </div>
-    <div style={{visibility: isVisible ? 'visible' : 'hidden', border: '1px solid #ccc', padding: '20px', margin: '20px 0' }}>
-      <h2>Your Learning Progress</h2>
-
-      {/* Section for Date Inputs */}
-      <div style={{ marginBottom: '20px', paddingBottom: '15px', borderBottom: '1px solid #eee' }}>
-        <h4>Filter Recall Accuracy by Date (Optional)</h4>
-        <div>
-          <label htmlFor="startDate" style={{ marginRight: '10px' }}>Start Date:</label>
-          <input
-            type="date"
-            id="startDate"
-            name="startDate"
-            value={startDate}
-            onChange={handleStartDateChange}
-            style={{ marginRight: '20px' }}
-          />
-          <label htmlFor="endDate" style={{ marginRight: '10px' }}>End Date:</label>
-          <input
-            type="date"
-            id="endDate"
-            name="endDate"
-            value={endDate}
-            onChange={handleEndDateChange}
-            style={{ marginRight: '20px' }}
-          />
-          {/* Button now triggers specific handler */}
-          <button
-            onClick={handleFetchProgressClick}
-            disabled={isLoading}
-          >
+      <div style={{ marginTop: '20px' }}>
+        <button onClick={handleClick} className="progress-button">
+          {isVisible ? 'Hide Progress' : 'Show Progress'}
+        </button>
+      </div>
+  
+      <div className={`progress-container ${isVisible ? 'progress-visible' : 'progress-hidden'}`}>
+        <h2 className="progress-heading">📊 Your Learning Progress</h2>
+  
+        <div className="date-filter">
+          <label>
+            Start Date:
+            <input type="date" value={startDate} onChange={handleStartDateChange} />
+          </label>
+          <label>
+            End Date:
+            <input type="date" value={endDate} onChange={handleEndDateChange} />
+          </label>
+          <button onClick={handleFetchProgressClick} disabled={isLoading} className="fetch-btn">
             {isLoading ? 'Fetching...' : 'Fetch Progress'}
           </button>
         </div>
-      </div>
-
-      {/* Section for Displaying Stats */}
-      <div>
-        <h4>Statistics Overview</h4>
-
-        {/* Loading Indicator */}
-        {isLoading && <p>Loading progress...</p>}
-
-        {/* Error Display */}
-        {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-
-        {/* --- Display Stats Area --- */}
-        {/* This entire block renders the statistics *from* the API response (via 'progressData' state) */}
+  
+        {isLoading && <p className="text-blue">Loading progress...</p>}
+        {error && <p className="text-red">Error: {error}</p>}
+  
         {!isLoading && !error && progressData && (
           <>
-            {/* Display general stats directly from progressData */}
             <p><strong>Total Cards:</strong> {progressData.totalCards}</p>
             <p><strong>Cards Due Today:</strong> {progressData.cardsDueToday}</p>
-
-            {/* Render bucket stats using helper which reads from progressData */}
-            <div style={{ marginTop: '15px' }}>
+  
+            <div>
               <strong>Cards per Bucket:</strong>
-              {renderBucketStats()}
+              <ul className="bucket-list">
+                {Object.entries(progressData.cardsPerBucket)
+                  .sort(([a], [b]) => Number(a) - Number(b))
+                  .map(([bucket, count]) => (
+                    <li key={bucket} className="bucket-item">
+                      <div className="bucket-label">Bucket {bucket}</div>
+                      <div className="bucket-count">{count}</div>
+                    </li>
+                  ))}
+              </ul>
             </div>
-
-            {/* Render recall accuracy using helper which reads from progressData */}
-            <div style={{ marginTop: '15px' }}>
+  
+            <div>
               <strong>Recall Accuracy:</strong>
-              {renderRecallAccuracy(progressData.recallAccuracy)}
+              {progressData.recallAccuracy ? (
+                <div className="recall-box">
+                  <p><em>Period: {progressData.recallAccuracy.startDate} to {progressData.recallAccuracy.endDate}</em></p>
+                  <ul className="recall-stats">
+                    <li><strong>Total Attempts:</strong> {progressData.recallAccuracy.totalAttempts}</li>
+                    <li><strong>Correct (Easy/Hard):</strong> <span className="text-green">{progressData.recallAccuracy.correctCount}</span></li>
+                    <li><strong>Wrong:</strong> <span className="text-red">{progressData.recallAccuracy.wrongCount}</span></li>
+                    <li><strong>Accuracy:</strong> <span className="text-blue">{progressData.recallAccuracy.correctPercentage.toFixed(1)}%</span></li>
+                  </ul>
+                </div>
+              ) : (
+                <p><em>No accuracy data for selected range.</em></p>
+              )}
             </div>
           </>
         )}
-
-        {/* Message when no data loaded yet */}
-        {!isLoading && !error && !progressData && (
-          <p>No progress data loaded yet. Fetching initial data...</p>
-        )}
       </div>
-    </div>
     </>
-); 
+  );
+  
 };
 
 // Export the component
