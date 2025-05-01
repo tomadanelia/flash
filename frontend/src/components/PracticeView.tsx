@@ -523,77 +523,138 @@ useEffect(() => {
   const currentCard = practiceCards[currentIndex];
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column'}}>
-
-    <div className='app-container'>
-      <h1>Practice Time!</h1>
-      <p>Day: {day}</p>
-
-
-      {/* Loading/Error/Session Finished Rendering */}
-      {isLoading && <p>Loading cards...</p>}
-      {error && !cameraError && <p style={{ color: 'red' }}>Error: {error}</p>}
-      {!isLoading && !error && sessionFinished && ( /* Session Finished */
-        <div><h2>Session Complete!</h2><p>No more cards for day {day}.</p><button onClick={handleNextDay} disabled={isLoading}>{isLoading ? "Loading..." : "Go to Next Day"}</button></div>
-      )}
-
-      {/* Main Practice Card Area */}
-      {!isLoading && !sessionFinished && currentCard && ( /* Card Display */
-         <div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', fontFamily: 'Arial, sans-serif' }}>
+      <div className='app-container' style={{ width: '100%', maxWidth: '600px', padding: '20px' }}>
+        <h1 style={{ color: '#4a90e2', marginBottom: '5px' }}>✨ Practice Time!</h1>
+        <p style={{ fontSize: '1.1em', color: '#555' }}>Day: <strong>{day}</strong></p>
+  
+        {isLoading && <p>Loading cards...</p>}
+        {error && !cameraError && <p style={{ color: 'red' }}>Error: {error}</p>}
+  
+        {!isLoading && !error && sessionFinished && (
+          <div>
+            <h2>✅ Session Complete!</h2>
+            <p>No more cards for day {day}.</p>
+            <button style={{ marginTop: '10px', padding: '8px 14px', background: '#4a90e2', color: 'white', border: 'none', borderRadius: '8px' }} onClick={handleNextDay} disabled={isLoading}>
+              {isLoading ? "Loading..." : "Go to Next Day"}
+            </button>
+          </div>
+        )}
+  
+        {!isLoading && !sessionFinished && currentCard && (
+          <div style={{ marginTop: '20px', textAlign: 'center' }}>
             <p>Card {currentIndex + 1} of {practiceCards.length}</p>
             <FlashcardDisplay card={currentCard} showBack={showBack} />
-            {!showBack ? ( <button onClick={handleShowBack}>Show Answer</button> ) : (
-               <div style={{ marginTop: '15px' }}>
-                  <div> {/* Button Row */}
-                     <button onClick={() => handleAnswer('Easy')} disabled={isLoading || !!confirmingGesture || isModelLoading}>Easy 👍</button>
-                     <button onClick={() => handleAnswer('Hard')} disabled={isLoading || !!confirmingGesture || isModelLoading}>Hard 🖐️</button>
-                     <button onClick={() => handleAnswer('Wrong')} disabled={isLoading || !!confirmingGesture || isModelLoading}>Wrong 👎</button>
-                     <button onClick={handleShowFront} style={{ marginLeft: '10px' }} disabled={isLoading || !!confirmingGesture || isModelLoading}>Show Front</button>
-                  </div>
-                  {/* Confirmation Indicator */}
-                  {isCameraEnabled && confirmingGesture && ( /* Indicator Display */
-                    <div style={{ marginTop: '10px', padding: '10px', border: '1px solid orange', background: '#fff8e1' }}>
-                        <p>Confirming: <strong>{confirmingGesture}</strong> ({Math.floor(confirmationProgress)}%)</p> {/* Use Math.floor */}
-                        <div style={{ width: '100%', backgroundColor: '#eee', height: '10px', borderRadius: '5px', overflow: 'hidden' }}>
-                           <div style={{ width: `${confirmationProgress}%`, backgroundColor: 'orange', height: '100%' }}></div>
-                        </div>
-                        <p style={{fontSize: '0.8em', color: '#600'}}>Hold gesture steady...</p>
+  
+            {!showBack ? (
+              <button onClick={handleShowBack} style={{ marginTop: '15px', padding: '10px 16px', background: '#7e57c2', color: 'white', border: 'none', borderRadius: '10px' }}>
+                Show Answer
+              </button>
+            ) : (
+              <div style={{ marginTop: '15px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  <button onClick={() => handleAnswer('Easy')} style={{ backgroundColor: '#81c784', color: 'white', padding: '10px 16px', border: 'none', borderRadius: '8px' }} disabled={isLoading || !!confirmingGesture || isModelLoading}>Easy 👍</button>
+                  <button onClick={() => handleAnswer('Hard')} style={{ backgroundColor: '#ffb74d', color: 'white', padding: '10px 16px', border: 'none', borderRadius: '8px' }} disabled={isLoading || !!confirmingGesture || isModelLoading}>Hard 🖐️</button>
+                  <button onClick={() => handleAnswer('Wrong')} style={{ backgroundColor: '#e57373', color: 'white', padding: '10px 16px', border: 'none', borderRadius: '8px' }} disabled={isLoading || !!confirmingGesture || isModelLoading}>Wrong 👎</button>
+                  <button onClick={handleShowFront} style={{ backgroundColor: '#9575cd', color: 'white', padding: '10px 16px', border: 'none', borderRadius: '8px' }} disabled={isLoading || !!confirmingGesture || isModelLoading}>Show Front</button>
+                </div>
+  
+                {isCameraEnabled && confirmingGesture && (
+                  <div style={{ marginTop: '15px', padding: '12px', borderRadius: '8px', border: '1px solid orange', background: '#fff8e1' }}>
+                    <p>Confirming: <strong>{confirmingGesture}</strong> ({Math.floor(confirmationProgress)}%)</p>
+                    <div style={{ width: '100%', backgroundColor: '#eee', height: '10px', borderRadius: '5px', overflow: 'hidden' }}>
+                      <div style={{ width: `${confirmationProgress}%`, backgroundColor: 'orange', height: '100%' }}></div>
                     </div>
-                  )}
-               </div>
+                    <p style={{ fontSize: '0.8em', color: '#600' }}>Hold gesture steady...</p>
+                  </div>
+                )}
+              </div>
             )}
-         </div>
-      )}
-
-      {/* Edge cases */}
-      {!isLoading && !error && !sessionFinished && !currentCard && practiceCards.length > 0 && ( <p>Error: Inconsistent state - current index {currentIndex}, but no card found.</p> )}
-      {!isLoading && !error && !sessionFinished && practiceCards.length === 0 && ( <p>No cards available for this session.</p> )}
-    </div>
-    <div>
-            {/* Camera Control and Preview Area */}
-        <div style={{ margin: '20px 0', padding: '10px', border: '1px dashed blue', position: 'fixed', right: '0', top: '0', display: 'flex', flexDirection: 'column-reverse', alignItems: 'center'}}>
-            <button onClick={handleToggleCamera} disabled={isLoading || isModelLoading}>
-          {isModelLoading ? 'Loading Model...' : (isCameraEnabled ? 'Disable Camera' : 'Enable Camera for Gestures')}
-        </button>
-        {cameraError && <p style={{ color: 'red', marginTop: '5px' }}>Camera Error: {cameraError}</p>}
-        {detectionError && <p style={{ color: 'orange', marginTop: '5px' }}>Detection Error: {detectionError}</p>}
-        <div style={{ marginTop: '10px', position: 'relative', width: '200px', height: '150px', border: '1px solid #ccc', backgroundColor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom:'10px'}}>
-             <video ref={videoRef} style={{ width: '100%', height: '100%', display: isCameraEnabled && !cameraError ? 'block' : 'none', transform: 'scaleX(-1)' }} autoPlay playsInline muted />
-             {isCameraEnabled && !cameraError && videoRef.current?.paused && <p style={{ position: 'absolute', color: '#555', fontSize: '0.9em' }}>Waiting for stream...</p> }
-             {!isCameraEnabled && !cameraError && <p style={{ color: '#555', fontSize: '0.9em', textAlign: 'center' }}>Camera is off</p> }
-             {cameraError && <p style={{ position: 'absolute', color: 'red', padding: '5px', background: 'rgba(255,255,255,0.8)' }}>Error!</p> }
-        </div>
-         {/* Display detected gesture */}
-         {isCameraEnabled && !cameraError && showBack && (
-            <p style={{marginTop: '5px', fontSize: '0.9em', fontWeight: 'bold'}}>
-                Detected Gesture: {detectedGesture || 'None'}
-            </p>
-         )}
+          </div>
+        )}
+  
+        {!isLoading && !error && !sessionFinished && !currentCard && practiceCards.length > 0 && (
+          <p>Error: Inconsistent state - current index {currentIndex}, but no card found.</p>
+        )}
+        {!isLoading && !error && !sessionFinished && practiceCards.length === 0 && (
+          <p>No cards available for this session.</p>
+        )}
       </div>
-      {/* End Camera Control Area */}
-    </div>
+  
+      {/* Camera Preview & Controls */}
+      <div style={{
+  margin: '20px 0',
+  padding: '10px',
+  position: 'fixed',
+  right: '10px',
+  top: '10px',
+  backgroundColor: '#e3f2fd',
+  borderRadius: '10px',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  zIndex: 1000
+}}>
+  <button
+    onClick={handleToggleCamera}
+    disabled={isLoading || isModelLoading}
+    style={{
+      background: '#42a5f5',
+      color: 'white',
+      padding: '8px 12px',
+      border: 'none',
+      borderRadius: '6px',
+      marginBottom: '10px',
+      cursor: 'pointer'
+    }}
+  >
+    {isModelLoading ? 'Loading Model...' : (isCameraEnabled ? 'Disable Camera' : 'Enable Camera for Gestures')}
+  </button>
+
+  {cameraError && <p style={{ color: 'red', fontSize: '0.9em' }}>Camera Error: {cameraError}</p>}
+  {detectionError && <p style={{ color: 'orange', fontSize: '0.9em' }}>Detection Error: {detectionError}</p>}
+
+  {/* Just the video feed, no wrapper */}
+  <video
+    ref={videoRef}
+    style={{
+      width: '200px',
+      height: '150px',
+      display: isCameraEnabled && !cameraError ? 'block' : 'none',
+      transform: 'scaleX(-1)',
+      borderRadius: '8px'
+    }}
+    autoPlay
+    playsInline
+    muted
+  />
+
+  {isCameraEnabled && !cameraError && videoRef.current?.paused && (
+    <p style={{ color: '#555', fontSize: '0.9em' }}>Waiting for stream...</p>
+  )}
+  {!isCameraEnabled && !cameraError && (
+    <p style={{ color: '#555', fontSize: '0.9em', textAlign: 'center' }}>Camera is off</p>
+  )}
+  {cameraError && (
+    <p style={{
+      color: 'red',
+      padding: '5px',
+      background: 'rgba(255,255,255,0.8)',
+      borderRadius: '6px'
+    }}>Error!</p>
+  )}
+
+  {isCameraEnabled && !cameraError && showBack && (
+    <p style={{ marginTop: '10px', fontSize: '0.9em', fontWeight: 'bold' }}>
+      Detected Gesture: {detectedGesture || 'None'}
+    </p>
+  )}
+</div>
+
     </div>
   );
+  
 };
 
 export default PracticeView;
