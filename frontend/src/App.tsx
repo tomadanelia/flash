@@ -5,13 +5,15 @@ import './App.css';
 
 function App() {
   return (
-    <div className="app-container">
+    <>
+    <div>
       <h1>Flashcard Learner</h1>
       <PracticeView />
       {/* Later, I might add routing components here */}
       <ProgressView />
       {/* Other components can be added here */}
     </div>
+    </>
   );
 }
 

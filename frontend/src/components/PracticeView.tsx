@@ -2,6 +2,7 @@
 
 // Import React hooks
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import '../App.css'; 
 
 // Import TFJS and Hand Pose Detection Model
 import * as tf from '@tensorflow/tfjs';
@@ -115,7 +116,7 @@ const PracticeView = () => {
     if (navigator.mediaDevices?.getUserMedia) {
       try {
         console.log("Requesting media stream...");
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 },  height: { ideal: 480 }} });
         console.log("Media stream obtained.");
         streamRef.current = stream;
         const videoElement = videoRef.current;
@@ -522,33 +523,12 @@ useEffect(() => {
   const currentCard = practiceCards[currentIndex];
 
   return (
-    <div /*className={styles.practiceContainer}*/>
+    <div style={{display: 'flex', flexDirection: 'column'}}>
+
+    <div className='app-container'>
       <h1>Practice Time!</h1>
       <p>Day: {day}</p>
 
-      {/* Camera Control and Preview Area */}
-      <div style={{ margin: '20px 0', padding: '10px', border: '1px dashed blue' }}>
-        <h4>Hand Gesture Controls</h4>
-        <button onClick={handleToggleCamera} disabled={isLoading || isModelLoading}>
-          {isModelLoading ? 'Loading Model...' : (isCameraEnabled ? 'Disable Camera' : 'Enable Camera for Gestures')}
-        </button>
-        {cameraError && <p style={{ color: 'red', marginTop: '5px' }}>Camera Error: {cameraError}</p>}
-        {detectionError && <p style={{ color: 'orange', marginTop: '5px' }}>Detection Error: {detectionError}</p>}
-        <div style={{ marginTop: '10px', position: 'relative', width: '200px', height: '150px', border: '1px solid #ccc', backgroundColor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-             <video ref={videoRef} style={{ width: '100%', height: '100%', display: isCameraEnabled && !cameraError ? 'block' : 'none' }} autoPlay playsInline muted />
-             {isCameraEnabled && !cameraError && videoRef.current?.paused && <p style={{ position: 'absolute', color: '#555', fontSize: '0.9em' }}>Waiting for stream...</p> }
-             {!isCameraEnabled && !cameraError && <p style={{ color: '#555', fontSize: '0.9em', textAlign: 'center' }}>Camera is off</p> }
-             {cameraError && <p style={{ position: 'absolute', color: 'red', padding: '5px', background: 'rgba(255,255,255,0.8)' }}>Error!</p> }
-        </div>
-         {!isCameraEnabled && !cameraError && <p style={{fontSize: '0.9em', color: '#666'}}>Enable camera to use hand gestures for answering.</p>}
-         {/* Display detected gesture */}
-         {isCameraEnabled && !cameraError && showBack && (
-            <p style={{marginTop: '5px', fontSize: '0.9em', fontWeight: 'bold'}}>
-                Detected Gesture: {detectedGesture || 'None'}
-            </p>
-         )}
-      </div>
-      {/* End Camera Control Area */}
 
       {/* Loading/Error/Session Finished Rendering */}
       {isLoading && <p>Loading cards...</p>}
@@ -588,6 +568,30 @@ useEffect(() => {
       {/* Edge cases */}
       {!isLoading && !error && !sessionFinished && !currentCard && practiceCards.length > 0 && ( <p>Error: Inconsistent state - current index {currentIndex}, but no card found.</p> )}
       {!isLoading && !error && !sessionFinished && practiceCards.length === 0 && ( <p>No cards available for this session.</p> )}
+    </div>
+    <div>
+            {/* Camera Control and Preview Area */}
+        <div style={{ margin: '20px 0', padding: '10px', border: '1px dashed blue', position: 'fixed', right: '0', top: '0', display: 'flex', flexDirection: 'column-reverse', alignItems: 'center'}}>
+            <button onClick={handleToggleCamera} disabled={isLoading || isModelLoading}>
+          {isModelLoading ? 'Loading Model...' : (isCameraEnabled ? 'Disable Camera' : 'Enable Camera for Gestures')}
+        </button>
+        {cameraError && <p style={{ color: 'red', marginTop: '5px' }}>Camera Error: {cameraError}</p>}
+        {detectionError && <p style={{ color: 'orange', marginTop: '5px' }}>Detection Error: {detectionError}</p>}
+        <div style={{ marginTop: '10px', position: 'relative', width: '200px', height: '150px', border: '1px solid #ccc', backgroundColor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom:'10px'}}>
+             <video ref={videoRef} style={{ width: '100%', height: '100%', display: isCameraEnabled && !cameraError ? 'block' : 'none', transform: 'scaleX(-1)' }} autoPlay playsInline muted />
+             {isCameraEnabled && !cameraError && videoRef.current?.paused && <p style={{ position: 'absolute', color: '#555', fontSize: '0.9em' }}>Waiting for stream...</p> }
+             {!isCameraEnabled && !cameraError && <p style={{ color: '#555', fontSize: '0.9em', textAlign: 'center' }}>Camera is off</p> }
+             {cameraError && <p style={{ position: 'absolute', color: 'red', padding: '5px', background: 'rgba(255,255,255,0.8)' }}>Error!</p> }
+        </div>
+         {/* Display detected gesture */}
+         {isCameraEnabled && !cameraError && showBack && (
+            <p style={{marginTop: '5px', fontSize: '0.9em', fontWeight: 'bold'}}>
+                Detected Gesture: {detectedGesture || 'None'}
+            </p>
+         )}
+      </div>
+      {/* End Camera Control Area */}
+    </div>
     </div>
   );
 };
