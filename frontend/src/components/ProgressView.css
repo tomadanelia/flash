@@ -1,0 +1,130 @@
+.progress-container {
+    border: 1px solid #ccc;
+    padding: 24px;
+    margin-top: 20px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: opacity 0.3s ease;
+  }
+  
+  .progress-hidden {
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+  }
+  
+  .progress-visible {
+    visibility: visible;
+    opacity: 1;
+    height: auto;
+  }
+  
+  .progress-heading {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+  }
+  
+  .progress-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+  
+  .progress-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .date-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 16px;
+  }
+  
+  .date-filter label {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .date-filter input {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .fetch-btn {
+    padding: 8px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .fetch-btn:hover {
+    background-color: #218838;
+  }
+  
+  .bucket-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+  
+  .bucket-item {
+    background: #f1f1f1;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+  }
+  
+  .bucket-label {
+    font-size: 0.85rem;
+    color: #666;
+  }
+  
+  .bucket-count {
+    font-size: 1.3rem;
+    color: #007bff;
+    font-weight: bold;
+  }
+  
+  .recall-box {
+    background: #f9f9f9;
+    padding: 14px;
+    border-radius: 6px;
+    margin-top: 16px;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .recall-stats li {
+    margin: 4px 0;
+    font-size: 0.95rem;
+  }
+  
+  .text-green {
+    color: #28a745;
+  }
+  
+  .text-red {
+    color: #dc3545;
+  }
+  
+  .text-blue {
+    color: #007bff;
+  }
+  
