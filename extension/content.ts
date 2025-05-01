@@ -71,14 +71,18 @@ function removeCreateButton() {
     createButton = null; // Clear the global reference
     console.log("--- Exiting removeCreateButton (createButton is now null) ---");
 }
-function handleButtonClick() {
+// Modify the function signature to accept the event
+let ignoreNextDocumentMouseUp = false; // Add this global flag
+
+function handleButtonClick(event: MouseEvent) { // <-- Add event parameter
+    // Stop this click event from bubbling up to the document's mouseup listener
+
     const selectedText = window.getSelection()?.toString().trim();
     console.log("Create Flashcard button clicked!");
 
     if (selectedText) {
         console.log("Selected Text:", selectedText);
 
-        // --- Ensure this is the code present ---
         console.log("Sending message to background to initiate card creation...");
         chrome.runtime.sendMessage({
             action: "initiateCardCreation",
@@ -90,17 +94,23 @@ function handleButtonClick() {
                 console.log("Message sent, response from background:", response);
             }
         });
-        // --- End check ---
 
     } else {
         console.log("No text selected when button clicked?");
     }
-    // Remove the button after handling the click
+    console.log("Setting ignoreNextDocumentMouseUp flag.");
+    ignoreNextDocumentMouseUp = true; // Set the flag
+    // Remove the button immediately after handling the click
     removeCreateButton();
 }
 document.addEventListener('mouseup', (event) => {
     console.log("MouseUp event detected on document.");
     setTimeout(() => {
+        if (ignoreNextDocumentMouseUp) {
+            console.log("Ignoring this mouseup event because flag is set.");
+            ignoreNextDocumentMouseUp = false; // Reset the flag for the *next* mouseup
+            return; // Stop processing this event
+        }
         const selection = window.getSelection();
         console.log("Inside setTimeout - Selection object:", selection);
         const selectedText = selection ? selection.toString().trim() : "";
@@ -124,8 +134,7 @@ document.addEventListener('mouseup', (event) => {
     }, 0);
 });
 
-/* // Start Comment Block
-document.addEventListener('mousedown', (event) => {
+/*document.addEventListener('mousedown', (event) => {
     console.log("Mousedown listener fired. Target:", event.target); // Add log
     if (createButton && event.target !== createButton) {
         console.log("Mousedown removing button."); // Add log
@@ -136,4 +145,4 @@ document.addEventListener('mousedown', (event) => {
          console.log("Mousedown occurred, but button didn't exist or target was button."); // Add log
     }
 });
-*/ // End Comment Block
+*/
