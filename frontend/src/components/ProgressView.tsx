@@ -134,7 +134,7 @@ const ProgressView: React.FC = () => {
   // --- Render the Component UI ---
   return (
     <>
-    <div> 
+    <div style={{marginTop: '20px'}}> 
         <button onClick={handleClick}>
         {isVisible ? 'Hide Div' : 'Show Div'}
           </button>  
