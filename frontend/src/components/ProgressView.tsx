@@ -17,6 +17,8 @@ const ProgressView: React.FC = () => {
   const [progressData, setProgressData] = useState<ProgressStats | null>(null); // Holds the API response
   const [isLoading, setIsLoading] = useState<boolean>(false); // Start as false, true during fetch
   const [error, setError] = useState<string | null>(null);   // For error messages
+  const [isVisible, setIsVisible] = useState(false);
+
 
   // --- Fetch Progress Function ---
   // Renamed fetchAndSetProgress for clarity, used by both useEffect and button handler
@@ -44,7 +46,9 @@ const ProgressView: React.FC = () => {
       setIsLoading(false); // Ensure loading is set to false after fetch completes or fails
     }
   };
-
+  const handleClick = () => {
+    setIsVisible(prev => !prev);
+  };
   // --- useEffect Hook for Initial Fetch ---
   // Runs once when the component mounts to get overall progress
   useEffect(() => {
@@ -129,7 +133,13 @@ const ProgressView: React.FC = () => {
 
   // --- Render the Component UI ---
   return (
-    <div style={{ border: '1px solid #ccc', padding: '20px', margin: '20px 0' }}>
+    <>
+    <div> 
+        <button onClick={handleClick}>
+        {isVisible ? 'Hide Div' : 'Show Div'}
+          </button>  
+   </div>
+    <div style={{visibility: isVisible ? 'visible' : 'hidden', border: '1px solid #ccc', padding: '20px', margin: '20px 0' }}>
       <h2>Your Learning Progress</h2>
 
       {/* Section for Date Inputs */}
@@ -202,7 +212,8 @@ const ProgressView: React.FC = () => {
         )}
       </div>
     </div>
-  );
+    </>
+); 
 };
 
 // Export the component
