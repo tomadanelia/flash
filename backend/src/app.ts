@@ -13,8 +13,8 @@ dotenv.config();
 
 const app: Express = express();
 const allowedOrigins = [
-  'http://localhost:5173', // For your local development
-  'https://flashcard-frontend.onrender.com' // YOUR LIVE FRONTEND URL
+  'http://localhost:5173', 
+  'https://flash-8hdo.onrender.com' 
 ];
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
@@ -31,7 +31,6 @@ app.use(express.json());
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from Flashcard Backend!');
 });
-//these connect routes to routers that connect them to handlers
 app.use('/api/day', dayRouter);
 app.use('/api/practice', practiceRouter);
 app.use('/api/update',updateRouter);
