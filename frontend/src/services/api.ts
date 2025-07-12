@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 // TODO: Update types in types/index.ts to match new backend shapes
-import { PracticeSession, Flashcard, ProgressStats, UpdatePracticeRequest, AnswerDifficultyString } from '../types'; 
+import {  Flashcard, AnswerDifficultyString } from '../types'; 
 
 // Define expected difficulty string type based on backend API
 
@@ -13,7 +13,7 @@ type UpdateCardData = CreateCardData; // Structure is the same for update body
 type NewProgressStats = any; // Placeholder for the new progress structure
 
 
-const API_BASE_URL = 'http://localhost:3001/api'; // Assuming new backend runs on 3001
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
