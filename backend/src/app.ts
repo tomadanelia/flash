@@ -12,8 +12,21 @@ import progressRouter from '@routes/progressRoutes';
 dotenv.config();
 
 const app: Express = express();
+const allowedOrigins = [
+  'http://localhost:5173', // For your local development
+  'https://flashcard-frontend.onrender.com' // YOUR LIVE FRONTEND URL
+];
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from Flashcard Backend!');
